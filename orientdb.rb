@@ -1,52 +1,63 @@
 
-# === the following is ok since this server is never 
-# exposed to the public... or event turned on.
+# === Final:
+#     OrientDB was put for the long-term.
+#     Java requires more memory than PG and Ruby 2.1.2 combined.
+#     Also, the HTTP vs Binary protocol was too much of a slow down
+#     compared to Ruby + PG paster 200 async requests.
+
+
+
+# === the following is ok since this server is never
+# exposed to the public. The OrientDB server is also
+# turned off when not being used by this script.
 get_cookie = <<-EOF
 curl -c /tmp/cookie.txt http://root:D86BBEFFBDD82E2EEAC70C43169EEBE62F4410F48CEA81A28A5EC7D34B0223F8@localhost:2480/connect/GratefulDeadConcerts && cat /tmp/cookie.txt
 EOF
+# ==================================================
 
 user="root"
 pswd="D86BBEFFBDD82E2EEAC70C43169EEBE62F4410F48CEA81A28A5EC7D34B0223F8"
 
-cookies = {"OSESSIONID"=>"OS1410056589824-6017226228821263965", "Path"=>"%2F"}
+cookies = {"OSESSIONID"=>"OS1410058525296-6337484251133599011", "Path"=>"%2F"}
 cookies_txt = cookies.map { |k,v| "#{k}=#{v};"}.join(' ')
 
 
 require 'em-http-request'
 
 
-counter = 0
-limit = 50
+T = Time.now.to_f
+Cache = {i: []}
+LIMIT = 200
+TIMES = []
 
-time = Time.now.to_f
+def get_time
+  Cache[:i] << 1
+  if Cache[:i].size >= LIMIT
+    EventMachine.stop
+  end
+  t = (Time.now.to_f - T)
+  TIMES << t
+  t
+end
+
 EventMachine.run {
 
-  https = []
-  i = 0
-  limit.times do |i|
-    # https[i] =
-    http = EventMachine::HttpRequest.new('http://localhost:2480/class/GratefulDeadConcerts/Person').
+  LIMIT.times do |i|
+    http = EventMachine::HttpRequest.
+      new('http://localhost:2480/class/GratefulDeadConcerts/Person').
       get(:head=>{'Cookie' => cookies_txt})
-    https[i] = http
-  # end
 
-  # limit.times do |i|
-    http.errback { p "Uh oh #{i}"; EM.stop }
-
+    http.errback { p 'Uh oh'; EM.stop }
     http.callback {
-      # p http.response_header.status
-      # p http.response_header
-      # p http.response
-      puts "#{http.response_header.status} - #{i} - #{counter}"
-      counter += 1
-      if counter >= limit
-        EventMachine.stop 
-        puts Time.now.to_f - time
-      end
+      # puts "#{http.response_header.status} #{i} #{get_time}"
+      get_time
     }
   end
 }
 
+at_exit {
+  puts "Highest: #{TIMES.sort.last}"
+}
 
 __END__
 # ----------------------------
