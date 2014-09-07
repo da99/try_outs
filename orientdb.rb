@@ -8,30 +8,38 @@ EOF
 user="root"
 pswd="D86BBEFFBDD82E2EEAC70C43169EEBE62F4410F48CEA81A28A5EC7D34B0223F8"
 
-cookies = {"OSESSIONID"=>"OS14100543518133229333956041526558", "Path"=>"%2F"}
+cookies = {"OSESSIONID"=>"OS1410056589824-6017226228821263965", "Path"=>"%2F"}
 cookies_txt = cookies.map { |k,v| "#{k}=#{v};"}.join(' ')
 
 
 require 'em-http-request'
 
 
-i = 0
-limit = 100
+counter = 0
+limit = 50
 
 time = Time.now.to_f
 EventMachine.run {
 
-  limit.times do
+  https = []
+  i = 0
+  limit.times do |i|
+    # https[i] =
     http = EventMachine::HttpRequest.new('http://localhost:2480/class/GratefulDeadConcerts/Person').
       get(:head=>{'Cookie' => cookies_txt})
+    https[i] = http
+  # end
 
-    http.errback { p 'Uh oh'; EM.stop }
+  # limit.times do |i|
+    http.errback { p "Uh oh #{i}"; EM.stop }
+
     http.callback {
       # p http.response_header.status
       # p http.response_header
       # p http.response
-      i += 1
-      if i >= limit
+      puts "#{http.response_header.status} - #{i} - #{counter}"
+      counter += 1
+      if counter >= limit
         EventMachine.stop 
         puts Time.now.to_f - time
       end
