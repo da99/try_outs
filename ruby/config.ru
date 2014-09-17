@@ -1,0 +1,4 @@
+
+require './cat'
+
+run Cuba
