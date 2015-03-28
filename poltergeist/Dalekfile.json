@@ -1,0 +1,7 @@
+{
+  "browsers": [{
+    "phantomjs": {
+      "binary": "/progs/bin/phantomjs" 
+    }
+  }, ["firefox"] ]
+}
