@@ -1,0 +1,14 @@
+{
+  "name": "hello_io",
+  "version": "1.0.0",
+  "description": "Learning exercise.",
+  "main": "server.js",
+  "scripts": {
+    "test": "bin/hello_io test"
+  },
+  "author": "da99",
+  "license": "MIT",
+  "engines" : {
+    "iojs": "^2.3.0"
+  }
+}
