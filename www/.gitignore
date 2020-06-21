@@ -1,0 +1,5 @@
+/.shards/
+/.crystal/
+/tmp/
+/lib/
+/node_modules/
