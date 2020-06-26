@@ -1,0 +1,11 @@
+name: www_server
+version: 0.0.0
+dependencies:
+  da:
+    github: da99/da
+  da_server:
+    github: da99/da_server
+
+targets:
+  www_server:
+    main: src/www_server.cr
