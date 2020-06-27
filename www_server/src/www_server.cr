@@ -21,6 +21,8 @@ class Not_Found
   end # def
 
   def call(ctx)
+    return call_next(ctx)
+
     code = ctx.response.status_code
 
     if !ctx.response.wrote_headers?

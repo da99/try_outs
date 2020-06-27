@@ -43,19 +43,25 @@
 
       return call_next(ctx) if !file_path
 
-      last_modified = File.info(file_path).modification_time
-      ctx.response.headers["Last-Modified"] = HTTP.format_time(last_modified)
-      if_modified_since = ctx.request.headers["If-Modified-Since"]?
+      # last_modified = File.info(file_path).modification_time
+      # ctx.response.headers["Last-Modified"] = HTTP.format_time(last_modified)
+      # if_modified_since = ctx.request.headers["If-Modified-Since"]?
 
-      if if_modified_since
-        header_time = HTTP.parse_time(if_modified_since)
+      # if if_modified_since
+      #   header_time = HTTP.parse_time(if_modified_since)
 
-        if header_time && last_modified <= header_time + 1.second
-          ctx.response.status_code = 304
-        end
+      #   if header_time && last_modified <= header_time + 1.second
+      #     ctx.response.status_code = 304
+      #   end
+      # end
+      ctx.response.content_type = DA_Server.mime(file_path)
+      ctx.response.content_length = File.size(file_path)
+      File.open(file_path) do |file|
+        IO.copy(file, ctx.response)
       end
+      # ctx.response.flush
 
-      return call_next(ctx)
+      # return call_next(ctx)
     end # === def call
 
     # Given an absolute path, returns a file:
