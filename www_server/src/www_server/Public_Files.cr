@@ -59,9 +59,6 @@
       File.open(file_path) do |file|
         IO.copy(file, ctx.response)
       end
-      # ctx.response.flush
-
-      # return call_next(ctx)
     end # === def call
 
     # Given an absolute path, returns a file:

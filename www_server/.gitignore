@@ -2,3 +2,4 @@
 /.crystal/
 /lib/
 /bin/www_server
+/tmp/
