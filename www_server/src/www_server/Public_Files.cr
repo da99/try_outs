@@ -52,15 +52,10 @@
 
         if header_time && last_modified <= header_time + 1.second
           ctx.response.status_code = 304
-          return
         end
       end
 
-      ctx.response.content_type = DA_Server.mime(file_path)
-      ctx.response.content_length = File.size(file_path)
-      File.open(file_path) do |file|
-        IO.copy(file, ctx.response)
-      end
+      return call_next(ctx)
     end # === def call
 
     # Given an absolute path, returns a file:
